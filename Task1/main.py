@@ -4,21 +4,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import periodogram
 
-data = pd.read_csv('2.csv', header=None,skiprows=1)
+data = pd.read_csv('3.csv', header=None,skiprows=1)
 data.columns = ['t', 'xi']
 data['xi'] = data['xi'].astype(float)
 
-frequencies, spectrum = periodogram(data['xi'])
-sorted_indices = np.argsort(spectrum)[::-1]
-most_significant_freqs = frequencies[sorted_indices[:2]]
-frequencies, spectrum = periodogram(data['xi'])
-sorted_indices = np.argsort(spectrum)[::-1]
-periods = 1 / most_significant_freqs
-total_amplitude_sum = np.sum(spectrum[1:])
-amplitude_ratios = spectrum[sorted_indices[:2]] / total_amplitude_sum
-
-most_significant_freq = most_significant_freqs[0]
-seasonal_component = np.sin(2 * np.pi * most_significant_freq * data['t'])
+frequencies, spectrum = periodogram(data['xi']) #Вычисление спектра мощности сигнала методом периодограммы.
+sorted_indices = np.argsort(spectrum)[::-1] #Получение индексов отсортированных значений спектра в порядке убывания.
+most_significant_freqs = frequencies[sorted_indices[:2]] #Выбор двух наиболее значимых частот.
+periods = 1 / most_significant_freqs #Вычисление периодов для выбранных значимых частот.
+total_amplitude_sum = np.sum(spectrum[1:]) #Вычисление общей суммы амплитуд (исключая постоянную составляющую).
+amplitude_ratios = spectrum[sorted_indices[:2]] / total_amplitude_sum #Вычисление отношений амплитуд для двух наиболее значимых частот.
 
 n = len(data['xi'])
 
@@ -39,14 +34,10 @@ def bj(j):
 def P(j):
     return math.pow(aj(j), 2) + math.pow(bj(j), 2)
 
-# Создание массива значений j от 1 до n
-j_values = np.arange(1, (n//2)+1)
+j_values = np.arange(1, (n//2)+1) # Создание массива значений j от 1 до n
+P_values = [P(j) for j in j_values] # Вычисление значений периодограммы P(j) для каждого j
 
-# Вычисление значений периодограммы P(j) для каждого j
-P_values = [P(j) for j in j_values]
-
-# Найдем индексы максимальных значений периодограммы
-max_indices = sorted(range(len(P_values)), key=lambda i: P_values[i], reverse=True)
+max_indices = sorted(range(len(P_values)), key=lambda i: P_values[i], reverse=True) # Найдем индексы максимальных значений периодограммы
 
 # Найдем два максимальных пика, учитывая условие о точках слева и справа
 peak_coordinates = []
