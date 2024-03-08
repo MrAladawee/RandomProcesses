@@ -7,8 +7,8 @@ from scipy.signal import periodogram
 data = pd.read_csv('2.csv', header=None,skiprows=1)
 data.columns = ['t', 'xi']
 data['xi'] = data['xi'].astype(float)
-frequencies, spectrum = periodogram(data['xi'])
 
+frequencies, spectrum = periodogram(data['xi'])
 sorted_indices = np.argsort(spectrum)[::-1]
 most_significant_freqs = frequencies[sorted_indices[:2]]
 frequencies, spectrum = periodogram(data['xi'])
@@ -87,6 +87,6 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-print("Самые существенные сезонные компоненты:", peak_coordinates[0], peak_coordinates[1])
+print("Самые существенные сезонные компоненты:", most_significant_freqs)
 print("Период:", periods)
 print("Доля амплитуды", amplitude_ratios)
